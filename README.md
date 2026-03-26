@@ -60,7 +60,9 @@ Think of it as going from a dumb terminal to an assistant that actually knows yo
 
 ### Installation
 
-**macOS / Linux:**
+**Step 1: Install the files**
+
+macOS / Linux:
 ```bash
 git clone https://github.com/Luispitik/synapis.git
 cd synapis
@@ -68,14 +70,35 @@ chmod +x install.sh
 ./install.sh
 ```
 
-**Windows:**
+Windows:
 ```cmd
 git clone https://github.com/Luispitik/synapis.git
 cd synapis
 install.bat
 ```
 
-**That's it.** Open Claude Code in any project. Synapis handles the rest.
+**Step 2: Create your Synapis home folder**
+
+Create a new empty folder anywhere on your computer. This will be your **Synapis control center** — the place where you configure and manage everything.
+
+```bash
+mkdir ~/synapis-home
+cd ~/synapis-home
+claude
+```
+
+**Step 3: Let Synapis guide you**
+
+When you open Claude Code in that folder for the first time, Synapis detects it's a fresh install and walks you through everything:
+
+1. Sets up your profile (who you are, what you do)
+2. Configures your memory (so it remembers you across projects)
+3. Activates automatic protections (security, quality checks)
+4. Shows you what you have and how to use it
+
+**After this first session, Synapis propagates to ALL your projects automatically.** You don't need to install anything else — just open Claude Code in any folder and your system is there.
+
+The `synapis-home` folder becomes your go-to place for system management: running `/system-status`, `/evolve`, or updating your global configuration.
 
 ---
 

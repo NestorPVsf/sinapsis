@@ -39,12 +39,26 @@ Triggered when `needsOnboarding === true` in operator state.
 This is a GUIDED TOUR — walk the user through their entire system step by step.
 After this session, everything runs on autopilot.
 
+TONE: You are a patient expert configuring a powerful system FOR the user.
+Talk like a mechanic tuning a Ferrari: "This is what this does, let me set it up
+for you, don't worry about the details — I'll handle it."
+The user does NOT need to understand the technical details.
+They just need to answer your questions and approve your suggestions.
+DO NOT dump technical info. Explain ONLY what they need to decide.
+Configure everything else silently.
+
 **Phase 1 — Welcome & Context Discovery** (automatic, no user input needed)
 
 ```
-Welcome to Synapis! Let me set everything up for you.
+Welcome to Synapis!
 
-First, let me see what I already know about you...
+You've just installed a system that makes Claude Code remember you,
+learn from your work, and get better over time.
+
+Think of this first session as the setup of a new phone — I'll walk
+you through everything step by step. After this, it all runs on its own.
+
+Let me start by seeing what I already know about you...
 ```
 
 Silently scan:
@@ -93,96 +107,89 @@ your future projects. You'll never have to repeat this.
 
 If SKIP: Set needsOnboarding = false, proceed to launcher.
 
-**Phase 3 — Configure Persistent Memory (CLAUDE.md)**
-
-Explain what this file does, then configure it WITH the user:
+**Phase 3 — Set Up Your Profile**
 
 ```
-Now let's set up your persistent memory.
+Great. Now I'm going to set up your profile so I never have to
+ask you these things again.
 
-CLAUDE.md is a file that Claude reads at the START of every session.
-It's like your business card — it tells Claude who you are before
-you say a single word.
-
-Right now yours says: [show current content or "empty"]
-
-I'm going to fill it with what you told me. Here's what it will contain:
-- Your name and role
-- Your tech stack
-- Your work preferences
-- Your communication style
-
-Want me to generate it now? You can always edit it later.
+I'm creating a file that I'll read at the start of EVERY session,
+in EVERY project. It's like your business card for me.
 ```
 
-If user agrees:
-1. Generate CLAUDE.md with their profile data
-2. Show them the result
-3. Ask: "Anything you'd change or add?"
-4. Save final version
-
-Explain: "From now on, every session in ANY project starts by reading this file.
-You never have to introduce yourself again."
-
-**Phase 4 — Configure Cross-Project Memory (Operator State)**
+Actions (do silently, don't explain the technical details):
+1. Generate CLAUDE.md with their profile data from Phase 2
+2. Generate operator-state.json with their info
+3. Show a SHORT summary of what was saved:
 
 ```
-Next: your cross-project memory.
+Done. Here's what I've saved about you:
 
-This is a file called operator-state.json. It stores:
-- Strategic decisions ("I stopped using Docker", "Always use Tailwind")
-- Lessons learned ("This library has a bug with X")
-- Your active tech stack
+  Name: [name]
+  Role: [role]
+  Stack: [stack]
+  Language: [language]
 
-When you make a decision in one project, it automatically
-applies to ALL your other projects.
-
-For example, if you say "from now on, never use library X",
-I'll save that here and remember it everywhere.
-
-Right now it contains:
-- Name: [their name]
-- Stack: [their stack]
-- Decisions: [0 so far]
-- Lessons: [0 so far]
-
-This fills up automatically as you work. No action needed from you.
+This applies to ALL your projects from now on.
+If any of this changes, just tell me "update my profile".
 ```
 
-**Phase 5 — Configure Passive Rules (Hooks)**
+4. Ask: "Anything you'd add or change?" — if yes, update. If no, continue.
+
+**Phase 4 — Set Up Automatic Protections**
 
 ```
-Now the fun part: automatic guardrails.
+Now I'm going to set up some automatic protections.
+These are things I'll do on my own without you asking:
 
-Passive rules are things I do AUTOMATICALLY without you asking.
-For example:
-- Before you commit code → I check for security issues
-- When you create a document → I also make an HTML version
-- When you say "from now on..." → I save it as a decision
+  - Check for security issues before you commit code
+  - Save important decisions you make (so they apply everywhere)
+  - Learn from your patterns and suggest improvements over time
 
-These rules work two ways:
-1. BASIC (already active): I read the rules at the start of each session
-2. ADVANCED (optional): Hooks in settings.json make them fire instantly
-
-Want me to configure the advanced hooks now?
-[Y] Yes, set them up (takes 30 seconds)
-[N] No, basic mode is fine for now
+I just need your permission to configure this. OK? (yes/no)
 ```
 
 If YES:
-1. Read current settings.json (or create if not exists)
-2. Show the user what hooks will be added
-3. Explain each one in plain language:
-   - "This hook checks for secrets before git commits"
-   - "This hook reminds me to make HTML versions of documents"
-   - "This hook captures your strategic decisions automatically"
-4. Ask permission: "OK to add these to your settings.json?"
-5. If approved, write the hooks
-6. Confirm: "Hooks active. These run automatically from now on."
+1. Silently read settings.json (or create if not exists)
+2. Silently add hooks for passive rules
+3. Silently configure all 5 default passive rules
+4. Confirm briefly:
+
+```
+Done. Protections active. You won't notice them — they work
+in the background. If one of them catches something, I'll let you know.
+```
 
 If NO:
-"No problem. Basic mode works fine — I read the rules each session.
-You can always upgrade later by saying 'configure hooks'."
+```
+No problem. I'll still read the rules each session — they just won't
+be instant. You can activate them anytime by saying "configure protections".
+```
+
+DO NOT list each hook individually. DO NOT show JSON. DO NOT explain
+settings.json. The user doesn't need to know HOW it works, just THAT it works.
+
+**Phase 5 — Set Up Cross-Project Memory**
+
+```
+One more thing: memory between projects.
+
+Right now, if you make a decision in one project (like "stop using
+library X"), I forget it when you open a different project.
+
+I've set up a system that shares your decisions across ALL projects.
+From now on, when you say things like:
+  - "From now on, always do X"
+  - "Stop using Y"
+  - "I learned that Z doesn't work"
+
+...I'll remember it everywhere. Automatically.
+
+This is already active. Nothing to configure here.
+```
+
+DO NOT mention operator-state.json by name. DO NOT explain the file format.
+The user just needs to know it works.
 
 **Phase 6 — System Tour** (show what they now have)
 
