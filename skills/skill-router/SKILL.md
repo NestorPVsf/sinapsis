@@ -93,53 +93,153 @@ your future projects. You'll never have to repeat this.
 
 If SKIP: Set needsOnboarding = false, proceed to launcher.
 
-**Phase 3 — System Tour** (show, don't just tell)
+**Phase 3 — Configure Persistent Memory (CLAUDE.md)**
+
+Explain what this file does, then configure it WITH the user:
 
 ```
-Your profile is saved. Now let me show you what you have:
+Now let's set up your persistent memory.
 
-SKILLS (5 always active):
-  1. Skill Router — I decide what tools to load for each project
-  2. Synapis Learning — I observe your work and learn patterns
-  3. Synapis Instincts — I store what I've learned
-  4. Deep Researcher — I can research any topic in depth
-  5. Context Optimizer — I keep token usage efficient
+CLAUDE.md is a file that Claude reads at the START of every session.
+It's like your business card — it tells Claude who you are before
+you say a single word.
+
+Right now yours says: [show current content or "empty"]
+
+I'm going to fill it with what you told me. Here's what it will contain:
+- Your name and role
+- Your tech stack
+- Your work preferences
+- Your communication style
+
+Want me to generate it now? You can always edit it later.
+```
+
+If user agrees:
+1. Generate CLAUDE.md with their profile data
+2. Show them the result
+3. Ask: "Anything you'd change or add?"
+4. Save final version
+
+Explain: "From now on, every session in ANY project starts by reading this file.
+You never have to introduce yourself again."
+
+**Phase 4 — Configure Cross-Project Memory (Operator State)**
+
+```
+Next: your cross-project memory.
+
+This is a file called operator-state.json. It stores:
+- Strategic decisions ("I stopped using Docker", "Always use Tailwind")
+- Lessons learned ("This library has a bug with X")
+- Your active tech stack
+
+When you make a decision in one project, it automatically
+applies to ALL your other projects.
+
+For example, if you say "from now on, never use library X",
+I'll save that here and remember it everywhere.
+
+Right now it contains:
+- Name: [their name]
+- Stack: [their stack]
+- Decisions: [0 so far]
+- Lessons: [0 so far]
+
+This fills up automatically as you work. No action needed from you.
+```
+
+**Phase 5 — Configure Passive Rules (Hooks)**
+
+```
+Now the fun part: automatic guardrails.
+
+Passive rules are things I do AUTOMATICALLY without you asking.
+For example:
+- Before you commit code → I check for security issues
+- When you create a document → I also make an HTML version
+- When you say "from now on..." → I save it as a decision
+
+These rules work two ways:
+1. BASIC (already active): I read the rules at the start of each session
+2. ADVANCED (optional): Hooks in settings.json make them fire instantly
+
+Want me to configure the advanced hooks now?
+[Y] Yes, set them up (takes 30 seconds)
+[N] No, basic mode is fine for now
+```
+
+If YES:
+1. Read current settings.json (or create if not exists)
+2. Show the user what hooks will be added
+3. Explain each one in plain language:
+   - "This hook checks for secrets before git commits"
+   - "This hook reminds me to make HTML versions of documents"
+   - "This hook captures your strategic decisions automatically"
+4. Ask permission: "OK to add these to your settings.json?"
+5. If approved, write the hooks
+6. Confirm: "Hooks active. These run automatically from now on."
+
+If NO:
+"No problem. Basic mode works fine — I read the rules each session.
+You can always upgrade later by saying 'configure hooks'."
+
+**Phase 6 — System Tour** (show what they now have)
+
+```
+Your system is configured. Here's what you have:
+
+ALWAYS ACTIVE (5 skills, ~2,700 tokens):
+  1. Skill Router — decides what tools to load per project
+  2. Synapis Learning — observes your work silently
+  3. Synapis Instincts — stores what it learns
+  4. Deep Researcher — researches any topic in depth
+  5. Context Optimizer — keeps token usage efficient
+
+PERSISTENT MEMORY:
+  - CLAUDE.md — your profile (loaded every session)
+  - Operator State — your decisions (shared across projects)
+
+AUTOMATIC GUARDRAILS:
+  - [X] passive rules active
+  - [hooks status: basic/advanced]
+
+COMMANDS:
+  /system-status  — dashboard of everything
+  /evolve         — turn patterns into skills
+  /skill-audit    — optimize your skill setup
+  /clone          — reuse a project as template
 
 TOKEN BUDGET:
-  These 5 skills use ~2,700 tokens (out of ~200,000 available)
-  That's 1.3% of your context — the rest is all for your work
-
-COMMANDS YOU CAN USE:
-  /system-status  — See everything at a glance
-  /evolve         — Turn patterns into reusable skills
-  /skill-audit    — Check what's installed and optimize
-  /clone          — Copy a project as template for a new one
-
-Say "launcher" anytime to change your mode.
+  System overhead: ~3,000 tokens (1.5% of context)
+  Available for work: ~197,000 tokens
 ```
 
-**Phase 4 — Skill Audit** (only if existing skills found)
+**Phase 7 — Skill Audit** (only if existing skills found)
 
 If the user already has skills installed:
 ```
 I found [X] existing skills in your system.
-Want me to run a quick audit? I'll tell you:
-- Which ones overlap (could be merged)
+Want me to run a quick audit? I'll show you:
+- What each skill does and how many tokens it costs
+- Which ones overlap (could be merged to save tokens)
 - Which ones you haven't used (could be archived)
-- How many tokens you could save
 
-This takes about 30 seconds. Want to do it now? (yes/skip)
+This takes about 30 seconds. Run it now? (yes/skip)
 ```
 
-If yes → run /skill-audit flow with token impact.
+If yes → run /skill-audit flow showing token impact per skill.
 
-**Phase 5 — Ready**
+**Phase 8 — Ready**
 
 ```
-You're all set! From now on, every session starts with your
-context already loaded. Synapis learns in the background.
+Everything is configured. From now on:
+- Every session loads your profile automatically
+- Decisions propagate across all projects
+- Synapis learns from your work in the background
+- Passive rules protect your code silently
 
-After 3-5 sessions, try /evolve to see what I've learned.
+After 3-5 sessions, try /evolve to see what I've learned about you.
 
 What would you like to work on?
 ```
@@ -147,7 +247,8 @@ What would you like to work on?
 Set `needsOnboarding = false` in operator state.
 
 **IMPORTANT**: After this first session, the user NEVER sees the setup again.
-Everything runs automatically from this point.
+Everything runs on autopilot from this point. If they want to reconfigure,
+they can say "reconfigure synapis" or "redo setup".
 
 ---
 
