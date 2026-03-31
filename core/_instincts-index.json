@@ -12,7 +12,7 @@
       "id": "env-vars-never-hardcode",
       "domain": "security",
       "level": "confirmed",
-      "trigger_pattern": "api.?key|secret|password|token|credential|\.env",
+      "trigger_pattern": "api.?key|secret|password|token|credential|\\.env",
       "inject": "Never hardcode secrets. Use environment variables. Add to .env.local, never commit.",
       "origin": "manual",
       "added": "2026-01-01"
