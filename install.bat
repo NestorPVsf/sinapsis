@@ -3,9 +3,9 @@ chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 :: ============================================================
-::  Synapis v3.2 — Installer for Windows
+::  Sinapsis v4.1 — Installer for Windows
 ::  Skills on Demand for Claude Code
-::  https://github.com/Luispitik/synapis
+::  https://github.com/Luispitik/sinapsis-3.2
 :: ============================================================
 
 set "CLAUDE_HOME=%USERPROFILE%\.claude"
@@ -13,141 +13,183 @@ set "SKILLS_DIR=%CLAUDE_HOME%\skills"
 set "LIBRARY_DIR=%SKILLS_DIR%\_library"
 set "ARCHIVED_DIR=%SKILLS_DIR%\_archived"
 set "COMMANDS_DIR=%CLAUDE_HOME%\commands"
+set "HOMUNCULUS_DIR=%CLAUDE_HOME%\homunculus\projects"
 set "SCRIPT_DIR=%~dp0"
 
 echo.
 echo ============================================================
-echo   Synapis v3.2 — Skills on Demand for Claude Code
-echo   Sistema inteligente que aprende y se adapta
+echo   Sinapsis v4.1 -- Skills on Demand for Claude Code
+echo   The system that learns and adapts to you
 echo ============================================================
 echo.
 
+:: Detect upgrade vs fresh install
+set "UPGRADING=false"
+if exist "%SKILLS_DIR%\_catalog.json" set "UPGRADING=true"
+
 :: Step 1: Check prerequisites
-echo [1/7] Verificando prerequisitos...
+echo [1/8] Checking prerequisites...
 
 where claude >nul 2>&1
 if %errorlevel% neq 0 (
-    echo   ! Claude Code no detectado en PATH
-    echo     Instala Claude Code primero: https://claude.ai/code
-    echo     Continuando de todas formas...
+    echo   ! Claude Code not found in PATH
+    echo     Install it first: https://claude.ai/code
+    echo     Continuing anyway...
 ) else (
-    echo   OK Claude Code detectado
+    echo   OK Claude Code detected
+)
+
+where node >nul 2>&1
+if %errorlevel% neq 0 (
+    echo   ERROR: Node.js not found.
+    echo          Sinapsis v4.1 hooks require Node.js.
+    echo          Install it: https://nodejs.org
+    pause
+    exit /b 1
+) else (
+    for /f "tokens=*" %%v in ('node --version') do echo   OK Node.js %%v detected
 )
 
 if exist "%CLAUDE_HOME%" (
-    echo   OK Directorio .claude\ existe
+    echo   OK .claude\ exists
 ) else (
-    echo   -- Creando .claude\
+    echo   -- Creating .claude\
     mkdir "%CLAUDE_HOME%"
 )
 
-:: Step 2: Detect existing installation
-echo [2/7] Detectando instalacion previa...
+:: Step 2: Backup if upgrading
+echo [2/8] Checking for existing installation...
 
-if exist "%SKILLS_DIR%\_catalog.json" (
-    echo   ! Instalacion previa detectada
-    echo     Se hara backup antes de sobrescribir
+if "%UPGRADING%"=="true" (
+    echo   ! Existing installation detected -- creating backup
     for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value') do set "dt=%%I"
     set "BACKUP_DIR=%CLAUDE_HOME%\_backup_!dt:~0,8!_!dt:~8,6!"
     mkdir "!BACKUP_DIR!" 2>nul
     xcopy "%SKILLS_DIR%" "!BACKUP_DIR!\skills_backup\" /E /I /Q >nul 2>&1
     xcopy "%COMMANDS_DIR%" "!BACKUP_DIR!\commands_backup\" /E /I /Q >nul 2>&1
-    echo   OK Backup guardado
+    echo   OK Backup saved to !BACKUP_DIR!
 ) else (
-    echo   OK Instalacion limpia
+    echo   OK Fresh install
 )
 
 :: Step 3: Create directory structure
-echo [3/7] Creando estructura de directorios...
+echo [3/8] Creating directory structure...
 
 if not exist "%SKILLS_DIR%" mkdir "%SKILLS_DIR%"
 if not exist "%LIBRARY_DIR%" mkdir "%LIBRARY_DIR%"
 if not exist "%ARCHIVED_DIR%" mkdir "%ARCHIVED_DIR%"
 if not exist "%COMMANDS_DIR%" mkdir "%COMMANDS_DIR%"
 if not exist "%CLAUDE_HOME%\projects" mkdir "%CLAUDE_HOME%\projects"
+if not exist "%HOMUNCULUS_DIR%" mkdir "%HOMUNCULUS_DIR%"
 
-echo   OK Directorios creados
+echo   OK Directories created
 
-:: Step 4: Copy core files
-echo [4/7] Instalando archivos core...
+:: Step 4: Copy core config files
+echo [4/8] Installing core config files...
 
 copy /Y "%SCRIPT_DIR%core\_catalog.json" "%SKILLS_DIR%\_catalog.json" >nul
 copy /Y "%SCRIPT_DIR%core\_passive-rules.json" "%SKILLS_DIR%\_passive-rules.json" >nul
 copy /Y "%SCRIPT_DIR%core\_projects.json" "%SKILLS_DIR%\_projects.json" >nul
+copy /Y "%SCRIPT_DIR%core\_instincts-index.json" "%SKILLS_DIR%\_instincts-index.json" >nul
 
 if not exist "%SKILLS_DIR%\_operator-state.json" (
     copy /Y "%SCRIPT_DIR%core\_operator-state.template.json" "%SKILLS_DIR%\_operator-state.json" >nul
-    echo   OK Operator state creado
+    echo   OK Operator state created
 ) else (
-    echo   -- Operator state existente preservado
+    echo   -- Existing operator state preserved
 )
 
 if not exist "%CLAUDE_HOME%\CLAUDE.md" (
     copy /Y "%SCRIPT_DIR%core\CLAUDE.md.template" "%CLAUDE_HOME%\CLAUDE.md" >nul
-    echo   OK CLAUDE.md creado
+    echo   OK CLAUDE.md created
 ) else (
-    echo   ! CLAUDE.md ya existe - no se sobrescribe
-    echo     Revisa core\CLAUDE.md.template para actualizaciones
+    echo   ! CLAUDE.md already exists - not overwritten
+    echo     Check core\CLAUDE.md.template for updates
 )
 
-echo   OK Core files instalados
+echo   OK Core config files installed
 
-:: Step 5: Copy global skills
-echo [5/7] Instalando 5 skills globales...
+:: Step 5: Copy hook scripts
+echo [5/8] Installing hook scripts...
 
+copy /Y "%SCRIPT_DIR%core\_passive-activator.sh" "%SKILLS_DIR%\_passive-activator.sh" >nul
+copy /Y "%SCRIPT_DIR%core\_instinct-activator.sh" "%SKILLS_DIR%\_instinct-activator.sh" >nul
+copy /Y "%SCRIPT_DIR%core\_session-learner.sh" "%SKILLS_DIR%\_session-learner.sh" >nul
+copy /Y "%SCRIPT_DIR%core\_project-context.sh" "%SKILLS_DIR%\_project-context.sh" >nul
+
+echo   OK 4 hook scripts installed
+echo   NOTE: On Windows, hooks run via Git Bash or WSL. See README for details.
+
+:: Step 6: Configure settings.json
+echo [6/8] Configuring hooks in settings.json...
+
+if not exist "%CLAUDE_HOME%\settings.json" (
+    node -e "const fs=require('fs');const t=JSON.parse(fs.readFileSync('%SCRIPT_DIR%core\\settings.template.json','utf8'));function s(o){if(Array.isArray(o))return o.map(s);if(typeof o==='object'&&o!==null){const r={};for(const[k,v]of Object.entries(o)){if(k.startsWith('_'))continue;r[k]=s(v);}return r;}return o;}fs.writeFileSync('%CLAUDE_HOME%\\settings.json',JSON.stringify(s(t),null,2));" >nul 2>&1
+    if %errorlevel% equ 0 (
+        echo   OK settings.json created with v4.1 hooks
+    ) else (
+        echo   ! Could not auto-create settings.json
+        echo     Copy core\settings.template.json to %CLAUDE_HOME%\settings.json manually
+    )
+) else (
+    echo   ! settings.json already exists
+    echo     Review core\settings.template.json and merge hooks manually
+)
+
+:: Step 7: Copy skills
+echo [7/8] Installing skills...
+
+set "skill_count=0"
 for /D %%d in ("%SCRIPT_DIR%skills\*") do (
     set "skill_name=%%~nxd"
     if not exist "%SKILLS_DIR%\!skill_name!" mkdir "%SKILLS_DIR%\!skill_name!"
     xcopy "%%d\*" "%SKILLS_DIR%\!skill_name!\" /Y /Q >nul 2>&1
     echo   OK !skill_name!
-)
-
-:: Step 6: Copy library skills (dormant)
-echo [6/7] Instalando skills dormidas en library...
-
-set "skill_count=0"
-for /D %%d in ("%SCRIPT_DIR%library\*") do (
-    set "lib_name=%%~nxd"
-    if not exist "%LIBRARY_DIR%\!lib_name!" mkdir "%LIBRARY_DIR%\!lib_name!"
-    xcopy "%%d\*" "%LIBRARY_DIR%\!lib_name!\" /Y /Q >nul 2>&1
     set /a skill_count+=1
 )
-echo   OK %skill_count% skills dormidas instaladas
 
-:: Step 7: Copy slash commands
-echo [7/7] Instalando slash commands...
+:: Step 8: Copy slash commands
+echo [8/8] Installing slash commands...
 
 set "cmd_count=0"
 for %%f in ("%SCRIPT_DIR%commands\*.md") do (
     copy /Y "%%f" "%COMMANDS_DIR%\" >nul
     set /a cmd_count+=1
 )
-echo   OK %cmd_count% comandos instalados
+echo   OK %cmd_count% commands installed
 
 :: Done!
 echo.
 echo ============================================================
-echo   Synapis v3.2 instalado correctamente
+if "%UPGRADING%"=="true" (
+    echo   Sinapsis v4.1 upgrade complete!
+) else (
+    echo   Sinapsis v4.1 installed!
+)
 echo ============================================================
 echo.
-echo   Que se ha instalado:
-echo   - 5 skills globales (siempre activas)
-echo   - %skill_count% skills dormidas (se activan por proyecto)
+echo   What was installed:
+echo   - 2 global skills (skill-router + sinapsis-learning)
+echo   - %skill_count% total skills
 echo   - %cmd_count% slash commands (/evolve, /clone, /system-status...)
-echo   - Catalogo, reglas pasivas, operator state
+echo   - 4 hook scripts (passive-activator, instinct-activator, session-learner, project-context)
+echo   - Core config: catalog, passive rules, instincts index, operator state
 echo.
-echo   Siguiente paso:
-echo   1. Abre Claude Code en cualquier proyecto
-echo   2. Synapis te guiara en el onboarding
-echo   3. Elige tu modo: Skills on Demand, manual o vanilla
+echo   Next step:
+echo   1. Open Claude Code in any project folder
+echo   2. Sinapsis will guide you through first-time setup
+echo   3. Choose your mode: Skills on Demand, manual, or vanilla
 echo.
-echo   Comandos utiles:
-echo   /system-status  - Ver estado del sistema
-echo   /evolve         - Evolucionar patrones en skills
-echo   /clone          - Clonar proyecto exitoso
-echo   /passive-status - Ver reglas pasivas activas
+echo   Useful commands:
+echo   /system-status    -- System dashboard
+echo   /evolve           -- Evolve patterns into skills
+echo   /analyze-session  -- Review learned proposals
+echo   /passive-status   -- Active passive rules
 echo.
-echo   Synapis aprende de ti. Cada sesion mejora la siguiente.
+echo   Windows note: hooks require Node.js. Git Bash recommended for .sh scripts.
+echo   See README for WSL/Git Bash configuration details.
+echo.
+echo   Sinapsis learns from you. Every session feeds the next.
 echo.
 
 endlocal

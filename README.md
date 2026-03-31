@@ -72,10 +72,10 @@ See [CHANGELOG.md](CHANGELOG.md) for full details.
 
 ### Requirements
 - [Claude Code](https://claude.ai/code) installed
+- [Node.js](https://nodejs.org) v18+ (required for the hooks — the installer will check)
 - Git
-- Node.js (for the hooks)
 
-### Installation
+### Fresh Installation
 
 **macOS / Linux:**
 ```bash
@@ -85,14 +85,77 @@ chmod +x install.sh
 ./install.sh
 ```
 
-**Windows:**
+**Windows (Command Prompt):**
 ```cmd
 git clone https://github.com/Luispitik/sinapsis-3.2.git
 cd sinapsis-3.2
 install.bat
 ```
 
+> **Windows note:** The `.sh` hook scripts run via Git Bash or WSL. If you use Claude Code on Windows, make sure Git Bash is installed and Claude Code can access it. The installer will remind you of this.
+
 After install, open Claude Code in any project folder. Sinapsis guides you through first-time setup.
+
+---
+
+## Upgrading from v3.2
+
+If you already have v3.2 installed, the installer handles the upgrade automatically — it backs up your existing installation first and preserves your `operator-state.json` and `CLAUDE.md`.
+
+```bash
+# Pull the latest changes
+git -C sinapsis-3.2 pull origin main
+
+# Run the installer again — it detects the upgrade automatically
+cd sinapsis-3.2
+./install.sh        # macOS / Linux
+# install.bat       # Windows
+```
+
+**What the upgrade adds:**
+
+| File | Where | What it does |
+|------|-------|-------------|
+| `_passive-activator.sh` | `~/.claude/skills/` | Fires matching passive rules per tool use |
+| `_instinct-activator.sh` | `~/.claude/skills/` | Injects matched instincts per tool use |
+| `_session-learner.sh` | `~/.claude/skills/` | Writes `context.md` + detects patterns at session end |
+| `_project-context.sh` | `~/.claude/skills/` | Injects last-session context at session start (once) |
+| `_instincts-index.json` | `~/.claude/skills/` | Instinct registry (starts with 3 generic examples) |
+
+**If you prefer to upgrade manually:**
+
+```bash
+# 1. Pull the repo
+git pull origin main
+
+# 2. Copy the new scripts
+cp core/_passive-activator.sh ~/.claude/skills/
+cp core/_instinct-activator.sh ~/.claude/skills/
+cp core/_session-learner.sh ~/.claude/skills/
+cp core/_project-context.sh ~/.claude/skills/
+chmod +x ~/.claude/skills/_passive-activator.sh
+chmod +x ~/.claude/skills/_instinct-activator.sh
+chmod +x ~/.claude/skills/_session-learner.sh
+chmod +x ~/.claude/skills/_project-context.sh
+
+# 3. Copy the new config files
+cp core/_instincts-index.json ~/.claude/skills/
+cp core/_passive-rules.json ~/.claude/skills/   # optional: review before overwriting
+
+# 4. Add hooks to ~/.claude/settings.json
+# See core/settings.template.json for the exact format
+```
+
+**Windows manual upgrade:**
+```cmd
+copy /Y core\_passive-activator.sh %USERPROFILE%\.claude\skills\
+copy /Y core\_instinct-activator.sh %USERPROFILE%\.claude\skills\
+copy /Y core\_session-learner.sh %USERPROFILE%\.claude\skills\
+copy /Y core\_project-context.sh %USERPROFILE%\.claude\skills\
+copy /Y core\_instincts-index.json %USERPROFILE%\.claude\skills\
+```
+
+**Then update `settings.json`** — see `core/settings.template.json` for the 7-hook configuration. If you already have hooks, merge them rather than overwriting.
 
 ---
 

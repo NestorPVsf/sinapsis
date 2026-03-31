@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================================
-#  Synapis v3.2 — Installer for macOS / Linux
+#  Sinapsis v4.1 — Installer for macOS / Linux
 #  Skills on Demand for Claude Code
-#  https://github.com/Luispitik/synapis
+#  https://github.com/Luispitik/sinapsis-3.2
 # ============================================================
 
 set -e
@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 BOLD='\033[1m'
 
 # Paths
@@ -23,115 +23,165 @@ SKILLS_DIR="$CLAUDE_HOME/skills"
 LIBRARY_DIR="$SKILLS_DIR/_library"
 ARCHIVED_DIR="$SKILLS_DIR/_archived"
 COMMANDS_DIR="$CLAUDE_HOME/commands"
+HOMUNCULUS_DIR="$CLAUDE_HOME/homunculus/projects"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo ""
 echo -e "${PURPLE}${BOLD}============================================================${NC}"
-echo -e "${PURPLE}${BOLD}  Synapis v3.2 — Skills on Demand for Claude Code${NC}"
-echo -e "${PURPLE}${BOLD}  Sistema inteligente que aprende y se adapta${NC}"
+echo -e "${PURPLE}${BOLD}  Sinapsis v4.1 — Skills on Demand for Claude Code${NC}"
+echo -e "${PURPLE}${BOLD}  The system that learns and adapts to you${NC}"
 echo -e "${PURPLE}${BOLD}============================================================${NC}"
 echo ""
 
-# Step 1: Check prerequisites
-echo -e "${BLUE}[1/7]${NC} Verificando prerequisitos..."
+# Detect upgrade vs fresh install
+UPGRADING=false
+if [ -f "$SKILLS_DIR/_catalog.json" ]; then
+    UPGRADING=true
+fi
+
+# ── Step 1: Check prerequisites ──
+echo -e "${BLUE}[1/8]${NC} Checking prerequisites..."
 
 if ! command -v claude &> /dev/null; then
-    echo -e "${YELLOW}  ! Claude Code no detectado en PATH${NC}"
-    echo -e "${YELLOW}    Instala Claude Code primero: https://claude.ai/code${NC}"
-    echo -e "${YELLOW}    Continuando de todas formas (los archivos se instalaran)...${NC}"
+    echo -e "${YELLOW}  ! Claude Code not found in PATH${NC}"
+    echo -e "${YELLOW}    Install it first: https://claude.ai/code${NC}"
+    echo -e "${YELLOW}    Continuing anyway (files will be installed)...${NC}"
 else
-    echo -e "${GREEN}  OK${NC} Claude Code detectado"
+    echo -e "${GREEN}  OK${NC} Claude Code detected"
+fi
+
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}  ERROR${NC} Node.js not found."
+    echo -e "${RED}         Sinapsis v4.1 hooks require Node.js.${NC}"
+    echo -e "${RED}         Install it: https://nodejs.org${NC}"
+    exit 1
+else
+    NODE_VER=$(node --version)
+    echo -e "${GREEN}  OK${NC} Node.js $NODE_VER detected"
 fi
 
 if [ -d "$CLAUDE_HOME" ]; then
-    echo -e "${GREEN}  OK${NC} Directorio ~/.claude/ existe"
+    echo -e "${GREEN}  OK${NC} ~/.claude/ exists"
 else
-    echo -e "${CYAN}  ->  Creando ~/.claude/${NC}"
+    echo -e "${CYAN}  ->  Creating ~/.claude/${NC}"
     mkdir -p "$CLAUDE_HOME"
 fi
 
-# Step 2: Detect existing installation
-echo -e "${BLUE}[2/7]${NC} Detectando instalacion previa..."
+# ── Step 2: Backup if upgrading ──
+echo -e "${BLUE}[2/8]${NC} Checking for existing installation..."
 
-EXISTING_INSTALL=false
-if [ -f "$SKILLS_DIR/_catalog.json" ]; then
-    EXISTING_INSTALL=true
-    echo -e "${YELLOW}  ! Instalacion previa detectada${NC}"
-    echo -e "${YELLOW}    Se hara backup antes de sobrescribir${NC}"
+if $UPGRADING; then
+    echo -e "${YELLOW}  ! Existing installation detected — creating backup${NC}"
     BACKUP_DIR="$CLAUDE_HOME/_backup_$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$BACKUP_DIR"
     cp -r "$SKILLS_DIR" "$BACKUP_DIR/skills_backup" 2>/dev/null || true
     cp -r "$COMMANDS_DIR" "$BACKUP_DIR/commands_backup" 2>/dev/null || true
-    echo -e "${GREEN}  OK${NC} Backup guardado en $BACKUP_DIR"
+    echo -e "${GREEN}  OK${NC} Backup saved to $BACKUP_DIR"
 else
-    echo -e "${GREEN}  OK${NC} Instalacion limpia"
+    echo -e "${GREEN}  OK${NC} Fresh install"
 fi
 
-# Step 3: Create directory structure
-echo -e "${BLUE}[3/7]${NC} Creando estructura de directorios..."
+# ── Step 3: Create directory structure ──
+echo -e "${BLUE}[3/8]${NC} Creating directory structure..."
 
 mkdir -p "$SKILLS_DIR"
 mkdir -p "$LIBRARY_DIR"
 mkdir -p "$ARCHIVED_DIR"
 mkdir -p "$COMMANDS_DIR"
 mkdir -p "$CLAUDE_HOME/projects"
+mkdir -p "$HOMUNCULUS_DIR"
 
-echo -e "${GREEN}  OK${NC} Directorios creados"
+echo -e "${GREEN}  OK${NC} Directories created"
 
-# Step 4: Copy core files
-echo -e "${BLUE}[4/7]${NC} Instalando archivos core..."
+# ── Step 4: Copy core config files ──
+echo -e "${BLUE}[4/8]${NC} Installing core config files..."
 
 cp "$SCRIPT_DIR/core/_catalog.json" "$SKILLS_DIR/_catalog.json"
 cp "$SCRIPT_DIR/core/_passive-rules.json" "$SKILLS_DIR/_passive-rules.json"
 cp "$SCRIPT_DIR/core/_projects.json" "$SKILLS_DIR/_projects.json"
+cp "$SCRIPT_DIR/core/_instincts-index.json" "$SKILLS_DIR/_instincts-index.json"
 
 # Operator state: only create if not exists (preserve user data)
 if [ ! -f "$SKILLS_DIR/_operator-state.json" ]; then
     cp "$SCRIPT_DIR/core/_operator-state.template.json" "$SKILLS_DIR/_operator-state.json"
-    echo -e "${GREEN}  OK${NC} Operator state creado (vacio, listo para onboarding)"
+    echo -e "${GREEN}  OK${NC} Operator state created (empty, ready for onboarding)"
 else
-    echo -e "${CYAN}  ->  Operator state existente preservado${NC}"
+    echo -e "${CYAN}  ->  Existing operator state preserved${NC}"
 fi
 
 # CLAUDE.md: only create if not exists
 if [ ! -f "$CLAUDE_HOME/CLAUDE.md" ]; then
     cp "$SCRIPT_DIR/core/CLAUDE.md.template" "$CLAUDE_HOME/CLAUDE.md"
-    echo -e "${GREEN}  OK${NC} CLAUDE.md creado"
+    echo -e "${GREEN}  OK${NC} CLAUDE.md created"
 else
-    echo -e "${YELLOW}  ! CLAUDE.md ya existe — no se sobrescribe${NC}"
-    echo -e "${YELLOW}    Revisa core/CLAUDE.md.template para actualizaciones${NC}"
+    echo -e "${YELLOW}  ! CLAUDE.md already exists — not overwritten${NC}"
+    echo -e "${YELLOW}    Check core/CLAUDE.md.template for updates${NC}"
 fi
 
-echo -e "${GREEN}  OK${NC} Core files instalados"
+echo -e "${GREEN}  OK${NC} Core config files installed"
 
-# Step 5: Copy global skills
-echo -e "${BLUE}[5/7]${NC} Instalando 5 skills globales..."
+# ── Step 5: Copy hook scripts ──
+echo -e "${BLUE}[5/8]${NC} Installing hook scripts..."
 
+cp "$SCRIPT_DIR/core/_passive-activator.sh" "$SKILLS_DIR/_passive-activator.sh"
+cp "$SCRIPT_DIR/core/_instinct-activator.sh" "$SKILLS_DIR/_instinct-activator.sh"
+cp "$SCRIPT_DIR/core/_session-learner.sh" "$SKILLS_DIR/_session-learner.sh"
+cp "$SCRIPT_DIR/core/_project-context.sh" "$SKILLS_DIR/_project-context.sh"
+
+chmod +x "$SKILLS_DIR/_passive-activator.sh"
+chmod +x "$SKILLS_DIR/_instinct-activator.sh"
+chmod +x "$SKILLS_DIR/_session-learner.sh"
+chmod +x "$SKILLS_DIR/_project-context.sh"
+
+echo -e "${GREEN}  OK${NC} 4 hook scripts installed and made executable"
+
+# ── Step 6: Configure settings.json ──
+echo -e "${BLUE}[6/8]${NC} Configuring hooks in settings.json..."
+
+SETTINGS_FILE="$CLAUDE_HOME/settings.json"
+
+if [ ! -f "$SETTINGS_FILE" ]; then
+    # Create from template (strip _comment fields)
+    node -e '
+const fs = require("fs");
+const template = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+// Remove _comment fields recursively
+function strip(obj) {
+  if (Array.isArray(obj)) return obj.map(strip);
+  if (typeof obj === "object" && obj !== null) {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (k.startsWith("_")) continue;
+      out[k] = strip(v);
+    }
+    return out;
+  }
+  return obj;
+}
+fs.writeFileSync(process.argv[2], JSON.stringify(strip(template), null, 2));
+' "$SCRIPT_DIR/core/settings.template.json" "$SETTINGS_FILE"
+    echo -e "${GREEN}  OK${NC} settings.json created with v4.1 hooks"
+else
+    echo -e "${YELLOW}  ! settings.json already exists${NC}"
+    echo -e "${YELLOW}    Review core/settings.template.json and merge hooks manually${NC}"
+    echo -e "${YELLOW}    (Existing hooks preserved to avoid breaking your setup)${NC}"
+fi
+
+# ── Step 7: Copy skills ──
+echo -e "${BLUE}[7/8]${NC} Installing skills..."
+
+skill_count=0
 for skill_dir in "$SCRIPT_DIR/skills"/*/; do
     skill_name=$(basename "$skill_dir")
     target="$SKILLS_DIR/$skill_name"
     mkdir -p "$target"
     cp "$skill_dir"* "$target/" 2>/dev/null || true
+    skill_count=$((skill_count + 1))
     echo -e "${GREEN}  OK${NC} $skill_name"
 done
 
-# Step 6: Copy library skills (dormant)
-echo -e "${BLUE}[6/7]${NC} Instalando skills dormidas en library..."
-
-skill_count=0
-for lib_dir in "$SCRIPT_DIR/library"/*/; do
-    if [ -d "$lib_dir" ]; then
-        lib_name=$(basename "$lib_dir")
-        target="$LIBRARY_DIR/$lib_name"
-        mkdir -p "$target"
-        cp "$lib_dir"* "$target/" 2>/dev/null || true
-        skill_count=$((skill_count + 1))
-    fi
-done
-echo -e "${GREEN}  OK${NC} $skill_count skills dormidas instaladas"
-
-# Step 7: Copy slash commands
-echo -e "${BLUE}[7/7]${NC} Instalando slash commands..."
+# ── Step 8: Copy slash commands ──
+echo -e "${BLUE}[8/8]${NC} Installing slash commands..."
 
 cmd_count=0
 for cmd_file in "$SCRIPT_DIR/commands"/*.md; do
@@ -140,30 +190,40 @@ for cmd_file in "$SCRIPT_DIR/commands"/*.md; do
         cmd_count=$((cmd_count + 1))
     fi
 done
-echo -e "${GREEN}  OK${NC} $cmd_count comandos instalados"
+echo -e "${GREEN}  OK${NC} $cmd_count commands installed"
 
-# Done!
+# ── Done ──
 echo ""
 echo -e "${GREEN}${BOLD}============================================================${NC}"
-echo -e "${GREEN}${BOLD}  Synapis v3.2 instalado correctamente${NC}"
+if $UPGRADING; then
+    echo -e "${GREEN}${BOLD}  Sinapsis v4.1 upgrade complete!${NC}"
+else
+    echo -e "${GREEN}${BOLD}  Sinapsis v4.1 installed!${NC}"
+fi
 echo -e "${GREEN}${BOLD}============================================================${NC}"
 echo ""
-echo -e "  ${BOLD}Que se ha instalado:${NC}"
-echo -e "  - 5 skills globales (siempre activas)"
-echo -e "  - $skill_count skills dormidas (se activan por proyecto)"
+echo -e "  ${BOLD}What was installed:${NC}"
+echo -e "  - 2 global skills (always active: skill-router + sinapsis-learning)"
+echo -e "  - $skill_count total skills"
 echo -e "  - $cmd_count slash commands (/evolve, /clone, /system-status...)"
-echo -e "  - Catalogo, reglas pasivas, operator state"
+echo -e "  - 4 hook scripts (passive-activator, instinct-activator, session-learner, project-context)"
+echo -e "  - Core config: catalog, passive rules, instincts index, operator state"
 echo ""
-echo -e "  ${BOLD}Siguiente paso:${NC}"
-echo -e "  1. Abre Claude Code en cualquier proyecto"
-echo -e "  2. Synapis te guiara en el onboarding"
-echo -e "  3. Elige tu modo: Skills on Demand, manual o vanilla"
+echo -e "  ${BOLD}Next step:${NC}"
+echo -e "  1. Open Claude Code in any project folder"
+echo -e "  2. Sinapsis will guide you through first-time setup"
+echo -e "  3. Choose your mode: Skills on Demand, manual, or vanilla"
 echo ""
-echo -e "  ${BOLD}Comandos utiles:${NC}"
-echo -e "  /system-status  — Ver estado del sistema"
-echo -e "  /evolve          — Evolucionar patrones en skills"
-echo -e "  /clone           — Clonar proyecto exitoso"
-echo -e "  /passive-status  — Ver reglas pasivas activas"
+echo -e "  ${BOLD}Useful commands:${NC}"
+echo -e "  /system-status    — System dashboard"
+echo -e "  /evolve           — Evolve patterns into skills"
+echo -e "  /analyze-session  — Review learned proposals"
+echo -e "  /passive-status   — Active passive rules"
 echo ""
-echo -e "${PURPLE}  Synapis aprende de ti. Cada sesion mejora la siguiente.${NC}"
+if $UPGRADING; then
+    echo -e "${CYAN}  Upgrade note: your operator state and CLAUDE.md were preserved.${NC}"
+    echo -e "${CYAN}  Backup saved to: $BACKUP_DIR${NC}"
+    echo ""
+fi
+echo -e "${PURPLE}  Sinapsis learns from you. Every session feeds the next.${NC}"
 echo ""
