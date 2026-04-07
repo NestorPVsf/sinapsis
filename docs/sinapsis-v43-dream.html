@@ -396,43 +396,80 @@
   <div class="main-body">
 
     <!-- ══ De donde viene ══ -->
-    <h2 id="que-es">De donde viene: AutoDream vs Sinapsis</h2>
+    <h2 id="que-es">De d&oacute;nde viene: AutoDream vs Sinapsis</h2>
     <p>
-      En abril de 2026, Anthropic publico (detras de un feature flag experimental) <strong>AutoDream</strong>:
-      un sub-agente de consolidacion de memoria que se ejecuta en idle time. Su funcion es limpiar los ficheros
-      de memoria de Claude Code &mdash; fusionar duplicados, resolver contradicciones, normalizar fechas
-      y podar entradas obsoletas. Un ciclo de 4 fases que imita la consolidacion de memoria durante el sueno.
-    </p>
-    <p>
-      Sinapsis v4.2 ya tenia un pipeline de aprendizaje superior en varios aspectos:
-      instincts tipados con trigger patterns, 3 niveles de confianza, auto-promote por ocurrencias,
-      deduplicacion por dominio y filtrado por stack de proyecto. Pero le faltaba algo que AutoDream si tenia:
-      <strong>higiene del indice</strong>. Con el tiempo, los instincts se acumulan sin consolidacion.
+      En abril de 2026, Anthropic public&oacute; (detr&aacute;s de un feature flag experimental llamado <code>tengu_onyx_plover</code>) <strong>AutoDream</strong>:
+      un sub-agente de consolidaci&oacute;n de memoria que se ejecuta en idle time. Su funci&oacute;n es limpiar los ficheros
+      de memoria de Claude Code &mdash; fusionar duplicados, resolver contradicciones, normalizar fechas relativas a absolutas
+      y podar entradas obsoletas. Un ciclo de 4 fases (Orientaci&oacute;n &rarr; Se&ntilde;al &rarr; Consolidaci&oacute;n &rarr; Poda) que imita la consolidaci&oacute;n de memoria durante el sue&ntilde;o REM.
     </p>
 
+    <h3>Lo que Sinapsis v4.2 ya ten&iacute;a mejor</h3>
+    <p>
+      Antes de incorporar ideas de AutoDream, Sinapsis v4.2 ya superaba su modelo en varios aspectos fundamentales:
+    </p>
+    <table>
+      <thead><tr><th>Capacidad</th><th>Sinapsis v4.2</th><th>AutoDream</th></tr></thead>
+      <tbody>
+        <tr><td>Tipo de conocimiento</td><td>Instincts tipados con <code>trigger_pattern</code> regex, dominio, nivel</td><td>Notas markdown planas sin estructura</td></tr>
+        <tr><td>Confianza</td><td>3 niveles (draft &rarr; confirmed &rarr; permanent) con auto-promote</td><td>Sin niveles &mdash; todo es igual</td></tr>
+        <tr><td>Inyecci&oacute;n inteligente</td><td>Dedup por dominio (m&aacute;x 1 instinct/dominio, m&aacute;x 3 por tool call)</td><td>No inyecta nada &mdash; solo limpia</td></tr>
+        <tr><td>Contexto de proyecto</td><td>Filtrado por stack del proyecto v&iacute;a <code>context.md</code></td><td>Sin scoping por proyecto</td></tr>
+        <tr><td>Coste en tokens</td><td>0 tokens (hooks deterministas en Node.js)</td><td>Usa LLM para todo el procesamiento</td></tr>
+        <tr><td>Detecci&oacute;n de patrones</td><td>3 detectores autom&aacute;ticos (error-fix, corrections, workflows)</td><td>Sin detecci&oacute;n &mdash; depende del usuario</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Lo que nos faltaba (y AutoDream s&iacute; ten&iacute;a)</h3>
     <div class="info-box">
-      <strong>Lo que tomamos de AutoDream:</strong>
+      <strong>4 conceptos que adoptamos:</strong>
       <ul>
-        <li>Consolidacion periodica &mdash; revisar el indice para detectar duplicados y contradicciones</li>
-        <li>Staleness scoring &mdash; identificar instincts que nunca se activan o llevan meses sin dispararse</li>
-        <li>Auto-archivo conservador &mdash; solo actuar automaticamente en borradores inactivos de 90+ dias</li>
-        <li>Health Score &mdash; una metrica unica que resume la salud del sistema</li>
+        <li><strong>Consolidaci&oacute;n peri&oacute;dica</strong> &mdash; Revisar el &iacute;ndice para detectar duplicados y contradicciones. Sinapsis acumulaba instincts sin limpieza.</li>
+        <li><strong>Staleness scoring</strong> &mdash; Identificar instincts que nunca se activan o llevan meses sin dispararse. El occurrence tracking exist&iacute;a, pero no hab&iacute;a &ldquo;envejecimiento&rdquo;.</li>
+        <li><strong>Auto-archivo conservador</strong> &mdash; Actuar autom&aacute;ticamente solo en borradores inactivos de 90+ d&iacute;as. Todo lo dem&aacute;s es propuesta para revisi&oacute;n humana.</li>
+        <li><strong>Health Score</strong> &mdash; Una m&eacute;trica &uacute;nica (0-100) que resume la salud del sistema de un vistazo.</li>
       </ul>
     </div>
 
     <div class="info-box warn">
-      <strong>Lo que NO copiamos de AutoDream:</strong>
+      <strong>Lo que NO copiamos (porque ya lo ten&iacute;amos mejor):</strong>
       <ul>
-        <li>AutoDream usa LLM para consolidar &mdash; nosotros somos 100% deterministas (0 tokens)</li>
-        <li>AutoDream opera sobre markdown plano &mdash; nosotros sobre JSON tipado con trigger patterns</li>
-        <li>AutoDream tiene un limite de 200 lineas &mdash; nuestro activator filtra por dominio/proyecto en runtime, sin limite artificial</li>
+        <li><strong>Uso de LLM para consolidar</strong> &mdash; AutoDream gasta tokens en cada ciclo. Nuestro Dream Cycle es 100% determinista (Node.js puro), coherente con toda la arquitectura de hooks de Sinapsis.</li>
+        <li><strong>Markdown plano como formato</strong> &mdash; AutoDream opera sobre notas de texto libre. Nosotros operamos sobre JSON tipado con trigger patterns, dominios y niveles de confianza.</li>
+        <li><strong>L&iacute;mite de 200 l&iacute;neas</strong> &mdash; AutoDream poda su &iacute;ndice cuando supera 200 l&iacute;neas. Nuestro activator ya filtra por dominio y stack de proyecto en runtime, as&iacute; que no necesitamos un l&iacute;mite artificial.</li>
       </ul>
     </div>
 
-    <h2>Que es el Dream Cycle</h2>
+    <h3>C&oacute;mo lo integramos en Sinapsis</h3>
     <p>
-      El Dream Cycle es el resultado de esa fusion: un proceso de mantenimiento autonomo para el indice de instincts
-      que ejecuta un analisis completo del fichero <code>_instincts-index.json</code> sin consumir un solo
+      El Dream Cycle no es un hook (no se ejecuta en cada tool call), sino un <strong>proceso on-demand</strong>
+      que se puede lanzar de dos formas:
+    </p>
+    <ul>
+      <li><strong>Manual:</strong> El usuario ejecuta <code>/dream</code> en cualquier sesi&oacute;n de Claude Code</li>
+      <li><strong>Programado:</strong> Como scheduled task semanal (igual que el linting diario <code>sinapsis-linting</code>)</li>
+    </ul>
+    <p>
+      El script <code>_dream.sh</code> lee <code>_instincts-index.json</code>, ejecuta los 5 m&oacute;dulos de an&aacute;lisis
+      secuencialmente, genera un reporte en <code>_dream-report.md</code>, y &mdash;solo si encuentra borradores inactivos
+      de 90+ d&iacute;as&mdash; los mueve a un array <code>archived</code> dentro del propio JSON (nunca se borra nada).
+      Todo con escritura at&oacute;mica (tmp + rename) y lock file para prevenir corrupciones.
+    </p>
+    <p>
+      El resultado encaja en el pipeline existente sin a&ntilde;adir ning&uacute;n hook nuevo:
+    </p>
+<pre><code>observe.sh &rarr; session-learner &rarr; /analyze-session &rarr; instinct-activator
+                                                              &darr;
+                                                    _instincts-index.json
+                                                              &darr;
+                                            /dream (Dream Cycle) &rarr; _dream-report.md
+                                              &uarr;
+                                    _knowledge-index.md (linting diario)</code></pre>
+
+    <h2>Qu&eacute; es el Dream Cycle</h2>
+    <p>
+      El Dream Cycle es el resultado de esa fusi&oacute;n: un proceso de mantenimiento aut&oacute;nomo para el &iacute;ndice de instincts
+      que ejecuta un an&aacute;lisis completo del fichero <code>_instincts-index.json</code> sin consumir un solo
       token de LLM. Todo es <strong>Node.js determinista</strong>, igual que el resto de hooks de Sinapsis.
     </p>
 
