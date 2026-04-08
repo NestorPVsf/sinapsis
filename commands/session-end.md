@@ -39,6 +39,35 @@ Analiza toda la conversación actual y genera un markdown con esta estructura:
 - [Cualquier contexto relevante que la próxima sesión necesite saber]
 ```
 
+## 1.5 Compliance Check — Verificación de instincts y reglas pasivas
+
+Antes de guardar, verificar que no se incumplieron reglas aprendidas durante la sesión.
+
+### Pasos
+
+1. Leer `~/.claude/skills/_instincts-index.json` y `~/.claude/skills/_passive-rules.json`
+2. Filtrar solo instincts con confidence `confirmed` o `permanent`, y todas las passive rules activas
+3. Para cada regla, evaluar: "En esta sesión hice algo que debería haber activado esta regla? Si sí, la cumplí?"
+4. Focos de revisión:
+   - **Deliverables**: HTML twins generados, imágenes de marca incluidas, formato correcto
+   - **Code patterns**: Supabase RLS aplicado, commit conventions seguidas, env vars correctas
+   - **Documentación**: MEMORY.md actualizado cuando corresponde, session logs completos
+
+### Si hay violaciones
+
+- Listar cada violación con el `id` de la regla y qué se omitió:
+  ```
+  INCUMPLIMIENTO: [rule-id] — [descripción breve de lo que faltó]
+  ```
+- Si el fix es pequeño (ej: falta un HTML twin, falta un header de seguridad):
+  ofrecer corregirlo AHORA antes de cerrar la sesión
+- Si el `inject` text de la regla es demasiado vago para actuar:
+  proponer una versión más específica y actualizar el instinct en `_instincts-index.json`
+
+### Si no hay violaciones
+
+No imprimir nada — pasar directamente al paso 2.
+
 ## 2. Guardar el archivo
 
 Detectar el directorio de memory del proyecto actual. Buscar en este orden:

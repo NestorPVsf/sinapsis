@@ -82,7 +82,7 @@ def main():
     session_id = data.get("session_id", "unknown")
 
     input_str = json.dumps(tool_input)[:5000] if isinstance(tool_input, dict) else str(tool_input)[:5000]
-    output_str = json.dumps(tool_output)[:5000] if isinstance(tool_output, dict) else str(tool_output)[:5000]
+    output_str = json.dumps(tool_output)[:10000] if isinstance(tool_output, dict) else str(tool_output)[:10000]
 
     # Scrub secrets — 5 patterns (v4.3.1: added JWT, GitHub, AWS, PEM)
     SECRET_RE = re.compile(
@@ -122,9 +122,16 @@ def main():
 
     if event == "tool_start":
         observation["input"] = scrub(input_str)
+        # Extract file_path for Edit/Write (used by session-learner for correction detection)
+        if tool_name in ("Edit", "Write") and isinstance(tool_input, dict):
+            fp = tool_input.get("file_path", "")
+            if fp:
+                observation["file_path"] = fp
 
     if event == "tool_complete" and tool_output is not None:
         observation["output"] = scrub(output_str)
+        # Also capture input for tool_complete (enables full context analysis)
+        observation["input"] = scrub(input_str)
         # Flag errors — session-learner uses this to detect error→resolution patterns
         # Use word boundaries to avoid false positives like "0 errors found"
         error_patterns = [
@@ -135,6 +142,12 @@ def main():
         output_lower = output_str.lower()
         if any(re.search(pat, output_lower) for pat in error_patterns):
             observation["is_error"] = True
+            # Extract first error line for downstream analysis
+            for line in output_str.split('\n'):
+                line_lower = line.strip().lower()
+                if any(re.search(pat, line_lower) for pat in error_patterns):
+                    observation["err_msg"] = scrub(line.strip()[:500])
+                    break
 
     obs_file = os.path.join(project_dir, "observations.jsonl")
 
