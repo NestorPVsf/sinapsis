@@ -33,28 +33,8 @@
       "chars": 6058,
       "measured": "2026-04-08"
     },
-    {
-      "id": "sinapsis-researcher",
-      "name": "Deep Researcher",
-      "description": "Investigacion profunda con web search, multiples fuentes y sintesis",
-      "type": "global",
-      "status": "active",
-      "tokens_estimate": 1486,
-      "chars": 5943,
-      "measured": "2026-04-08"
-    },
-    {
-      "id": "sinapsis-optimizer",
-      "name": "Context Optimizer",
-      "description": "Optimiza uso de contexto, detecta desperdicio, sugiere limpieza",
-      "type": "global",
-      "status": "active",
-      "tokens_estimate": 1594,
-      "chars": 6376,
-      "measured": "2026-04-08"
-    }
   ],
   "librarySkills": [],
-  "totalTokensGlobal": 9995,
+  "totalTokensGlobal": 6915,
   "note": "Token estimates measured 2026-04-08 using chars/4 approximation. Library skills se anaden automaticamente al instalar desde _library/"
 }

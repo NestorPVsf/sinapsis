@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-#  Sinapsis v4.3.0 — Installer for macOS / Linux
+#  Sinapsis v4.3.1 — Installer for macOS / Linux
 #  Skills on Demand for Claude Code
 #  https://github.com/Luispitik/sinapsis-3.2
 # ============================================================

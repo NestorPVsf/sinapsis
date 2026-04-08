@@ -19,8 +19,9 @@ LOG_FILE="$HOME/.claude/skills/_session-learner.log"
 # Find the most recently MODIFIED observations file (fix #17: was selecting by hash, not recency)
 OBS_FILE=""
 if [ -d "$HOMUNCULUS/projects" ]; then
-  OBS_FILE=$(find "$HOMUNCULUS/projects" -name "observations.jsonl" -newer "$HOMUNCULUS/.last-learn" -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
-  [ -z "$OBS_FILE" ] && OBS_FILE=$(find "$HOMUNCULUS/projects" -name "observations.jsonl" -size +0c -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)
+  # Portable: use stat instead of GNU find -printf (works on macOS + Linux + Git Bash)
+  OBS_FILE=$(find "$HOMUNCULUS/projects" -name "observations.jsonl" -newer "$HOMUNCULUS/.last-learn" 2>/dev/null | while read -r f; do echo "$(stat -c '%Y' "$f" 2>/dev/null || stat -f '%m' "$f" 2>/dev/null || echo 0) $f"; done | sort -rn | head -1 | cut -d' ' -f2-)
+  [ -z "$OBS_FILE" ] && OBS_FILE=$(find "$HOMUNCULUS/projects" -name "observations.jsonl" -size +0c 2>/dev/null | while read -r f; do echo "$(stat -c '%Y' "$f" 2>/dev/null || stat -f '%m' "$f" 2>/dev/null || echo 0) $f"; done | sort -rn | head -1 | cut -d' ' -f2-)
 fi
 
 [ -z "$OBS_FILE" ] && exit 0

@@ -1,5 +1,68 @@
 # Changelog
 
+## v5.0-alpha (2026-04-08)
+
+### Added — Multi-Agent Reflection Layer
+- **Reflection Orchestrator** (`core/_reflection-orchestrator.sh`): Deterministic decision engine
+  - Reads proposals, counts unclassified, decides Scout/Analyst invocation
+  - Budget enforcement via `_agent-budget.json` (daily limits per agent tier)
+  - Audit trail in `_reflection-log.jsonl`
+- **Knowledge Graph template** (`core/_knowledge-graph.json`): Instinct relationships
+- **Agent Budget template** (`core/_agent-budget.json`): Cost tracking per agent
+- **Proposals v2 template** (`core/_instinct-proposals.json`): Extended schema for Scout/Analyst fields
+- **Architecture design doc** (`docs/ARCHITECTURE-v5-multi-agent.md`): Full design for 3-agent system
+
+### Tests
+- 16 TDD tests for reflection orchestrator (`tests/test-reflection-orchestrator.sh`)
+
+### Note
+- Agent prompt files (`_agent-scout.prompt.md`, `_agent-analyst.prompt.md`) not yet created — Phase 2
+- Architect agent not yet implemented — Phase 4
+
+---
+
+## v4.3.1 (2026-04-08)
+
+### Fixed — Fersora Audit (22 bugs + 6 vulnerabilities)
+- **#1-3**: install.sh preserves user data on upgrade (instincts, rules, projects, operator state)
+- **#4/5A**: execFileSync replaces execSync (command injection prevention)
+- **#5**: Auto-promote works correctly (drafts track occurrences without injecting)
+- **#6**: Race condition fix (dream lock check before index write)
+- **#7/5E**: fcntl.flock on JSONL writes
+- **#8**: Token catalog corrected (9,995 → 6,915 after cleanup)
+- **#9**: install.bat synced to v4.3.1
+- **#10-11**: Command schemas match reality
+- **#12/5C**: ReDoS protection on trigger patterns
+- **#13**: Jaccard Unicode support
+- **#14**: Contradiction false positive reduction
+- **#15**: session-end/eod documented
+- **#16**: tmpdir cleanup
+- **#17**: session-learner selects by recency not hash
+- **#18**: operator-state schema flag
+- **#19**: KNOWLEDGE_FILE dead code removed
+- **#20**: synapis → sinapsis rename
+- **#22**: SINAPSIS_DEBUG mode
+- **5B**: +4 secret patterns (GitHub, JWT, AWS, Stripe)
+- **5D**: chmod 600 on data files
+- **5F**: Inject sanitization (500 char limit + blocked patterns)
+
+### Directory Audit Cleanup
+- **Removed**: `skills/sinapsis-researcher/` (contradicts d011 — moved to on-demand)
+- **Removed**: `skills/sinapsis-optimizer/` (90% duplicated by `commands/skill-audit.md`)
+- **Removed**: `commands/clone.md` (100% duplicated by skill-router Section 4)
+- **Removed**: `docs/synapis-technical-docs.docx` (typo + obsolete v3.2 content)
+- **Fixed**: Portable find in `_session-learner.sh` (stat fallback for macOS)
+- **Fixed**: fcntl Windows compatibility in `observe_v3.py` (try/except fallback)
+- **Fixed**: install.bat now creates `.last-learn` marker
+- **Fixed**: `_catalog.json` reduced to 3 global skills (was 5)
+- **Fixed**: `.gitignore` expanded from 1 line to 12 patterns
+- **Token savings**: ~4,080 tokens/session (~41% reduction)
+
+### Tests
+- 52/52 GREEN (25 dream + 11 security + 16 orchestrator)
+
+---
+
 ## v4.3.0 (2026-04-08)
 
 ### Added

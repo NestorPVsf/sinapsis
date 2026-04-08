@@ -4,7 +4,11 @@ Appends one JSONL observation per tool use to homunculus/projects/{hash}/observa
 Scrubs secrets from input/output before writing.
 Sets is_error=True when output contains error keywords (used by session-learner)."""
 
-import json, sys, os, re, hashlib, fcntl, stat
+import json, sys, os, re, hashlib, stat
+try:
+    import fcntl
+except ImportError:
+    fcntl = None  # Windows: fallback to no-lock (single-user safe)
 from datetime import datetime, timezone
 
 
@@ -141,13 +145,15 @@ def main():
                 lock_path = obs_file + ".lock"
                 try:
                     lock_fd = open(lock_path, "w")
-                    fcntl.flock(lock_fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    if fcntl:
+                        fcntl.flock(lock_fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                     if os.path.exists(obs_file) and os.path.getsize(obs_file) >= 10 * 1024 * 1024:
                         archive_dir = os.path.join(project_dir, "observations.archive")
                         os.makedirs(archive_dir, exist_ok=True)
                         archive_name = "observations-" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".jsonl"
                         os.rename(obs_file, os.path.join(archive_dir, archive_name))
-                    fcntl.flock(lock_fd.fileno(), fcntl.LOCK_UN)
+                    if fcntl:
+                        fcntl.flock(lock_fd.fileno(), fcntl.LOCK_UN)
                     lock_fd.close()
                 except (IOError, OSError):
                     pass
@@ -156,9 +162,11 @@ def main():
 
     try:
         with open(obs_file, "a", encoding="utf-8") as f:
-            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+            if fcntl:
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
             f.write(json.dumps(observation) + "\n")
-            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+            if fcntl:
+                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
         # v4.3.1: restrictive permissions on data files (#5D)
         try:
             os.chmod(obs_file, stat.S_IRUSR | stat.S_IWUSR)

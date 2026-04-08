@@ -95,6 +95,7 @@ if not exist "%COMMANDS_DIR%" mkdir "%COMMANDS_DIR%"
 if not exist "%CLAUDE_HOME%\projects" mkdir "%CLAUDE_HOME%\projects"
 if not exist "%HOMUNCULUS_DIR%" mkdir "%HOMUNCULUS_DIR%"
 if not exist "%SKILLS_DIR%\_daily-summaries" mkdir "%SKILLS_DIR%\_daily-summaries"
+type nul > "%CLAUDE_HOME%\homunculus\.last-learn" 2>nul
 
 echo   OK Directories created
 

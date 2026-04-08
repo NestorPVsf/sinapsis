@@ -1,4 +1,4 @@
-# Sinapsis v4.3.0
+# Sinapsis v4.3.1
 
 ### The skill system for Claude Code that learns and adapts to you.
 
