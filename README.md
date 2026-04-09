@@ -424,6 +424,8 @@ Built by [Luis Salgado](https://salgadoia.com) — AI consultant, developer, and
 
 Powered by [Claude Code](https://claude.ai/code) by Anthropic.
 
+v4.4 skills (`/review-army`, `/cso-audit`, `/investigate-pro`), confidence decay, session timeline, and `/retro-semanal` inspired by [garrytan/gstack](https://github.com/garrytan/gstack) (MIT License, Copyright (c) 2026 Garry Tan). All implementations are original.
+
 ---
 
 *Sinapsis: because your AI assistant should remember who you are.*

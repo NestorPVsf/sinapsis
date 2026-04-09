@@ -1,4 +1,4 @@
-Synapis — Source Available License v1.0
+Sinapsis — Source Available License v1.0
 
 Copyright (c) 2026 Luis Salgado / SalgadoIA (salgadoia.com)
 
@@ -7,19 +7,19 @@ TERMS AND CONDITIONS
 1. GRANT OF RIGHTS
 
    You are free to:
-   - Use Synapis for personal and internal business purposes
-   - Modify and adapt Synapis for your own use
-   - Study how Synapis works and learn from it
-   - Share Synapis with others under these same terms
+   - Use Sinapsis for personal and internal business purposes
+   - Modify and adapt Sinapsis for your own use
+   - Study how Sinapsis works and learn from it
+   - Share Sinapsis with others under these same terms
 
 2. RESTRICTIONS
 
    You may NOT:
-   - Sell Synapis or any derivative work as a standalone product
-   - Offer Synapis as a paid service (SaaS, consulting package, course material)
+   - Sell Sinapsis or any derivative work as a standalone product
+   - Offer Sinapsis as a paid service (SaaS, consulting package, course material)
    - Remove or alter this license, credits, or attribution notices
-   - Claim authorship of the original Synapis system
-   - Use Synapis in competing commercial products or services
+   - Claim authorship of the original Sinapsis system
+   - Use Sinapsis in competing commercial products or services
 
 3. COMMERCIAL USE
 
@@ -27,20 +27,20 @@ TERMS AND CONDITIONS
    Luis Salgado / SalgadoIA (salgadoia.com)
 
    This includes but is not limited to:
-   - Selling Synapis or derivative works
-   - Including Synapis in paid courses, trainings, or workshops
-   - Offering Synapis setup, configuration, or customization as a paid service
-   - Bundling Synapis with other commercial products
+   - Selling Sinapsis or derivative works
+   - Including Sinapsis in paid courses, trainings, or workshops
+   - Offering Sinapsis setup, configuration, or customization as a paid service
+   - Bundling Sinapsis with other commercial products
 
    For commercial licensing inquiries: https://salgadoia.com
 
 4. ATTRIBUTION
 
-   Any use of Synapis must include visible attribution:
-   "Powered by Synapis — salgadoia.com"
+   Any use of Sinapsis must include visible attribution:
+   "Powered by Sinapsis — salgadoia.com"
 
    This attribution must appear in:
-   - Any public-facing documentation that references Synapis
+   - Any public-facing documentation that references Sinapsis
    - Any derivative works shared publicly
 
 5. CONTRIBUTIONS
@@ -52,7 +52,7 @@ TERMS AND CONDITIONS
 
 6. NO WARRANTY
 
-   Synapis is provided "as is", without warranty of any kind,
+   Sinapsis is provided "as is", without warranty of any kind,
    express or implied. The copyright holder is not liable for
    any damages arising from its use.
 
@@ -60,7 +60,39 @@ TERMS AND CONDITIONS
 
    This license terminates automatically if you violate any of
    its terms. Upon termination, you must destroy all copies of
-   Synapis in your possession.
+   Sinapsis in your possession.
+
+8. THIRD-PARTY NOTICES
+
+   Sinapsis v4.4 incorporates concepts inspired by gstack
+   (https://github.com/garrytan/gstack), licensed under the MIT License:
+
+   MIT License — Copyright (c) 2026 Garry Tan
+
+   Permission is hereby granted, free of charge, to any person obtaining
+   a copy of this software and associated documentation files (the
+   "Software"), to deal in the Software without restriction, including
+   without limitation the rights to use, copy, modify, merge, publish,
+   distribute, sublicense, and/or sell copies of the Software, and to
+   permit persons to whom the Software is furnished to do so, subject to
+   the following conditions:
+
+   The above copyright notice and permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+   Note: No code was copied from gstack. The concepts of structured code
+   review, security auditing, systematic debugging, weekly retrospectives,
+   confidence decay, and session timelines were adapted into original
+   Sinapsis implementations.
 
 For questions about this license or commercial use:
 https://salgadoia.com
