@@ -3,7 +3,7 @@ chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 :: ============================================================
-::  Sinapsis v4.3.1 — Installer for Windows
+::  Sinapsis v4.4 — Installer for Windows
 ::  Skills on Demand for Claude Code
 ::  https://github.com/Luispitik/sinapsis-3.2
 :: ============================================================
@@ -18,7 +18,7 @@ set "SCRIPT_DIR=%~dp0"
 
 echo.
 echo ============================================================
-echo   Sinapsis v4.3.1 -- Skills on Demand for Claude Code
+echo   Sinapsis v4.4 -- Skills on Demand for Claude Code
 echo   The system that learns and adapts to you
 echo ============================================================
 echo.
@@ -42,7 +42,7 @@ if %errorlevel% neq 0 (
 where node >nul 2>&1
 if %errorlevel% neq 0 (
     echo   ERROR: Node.js not found.
-    echo          Sinapsis v4.3.1 hooks require Node.js.
+    echo          Sinapsis v4.4 hooks require Node.js.
     echo          Install it: https://nodejs.org
     pause
     exit /b 1
@@ -160,7 +160,7 @@ echo [6/8] Configuring hooks in settings.json...
 if not exist "%CLAUDE_HOME%\settings.json" (
     node -e "var fs=require('fs'),p1=process.argv[1],p2=process.argv[2];var t=JSON.parse(fs.readFileSync(p1,'utf8'));function s(o){if(Array.isArray(o))return o.map(s);if(typeof o==='object'&&o!==null){var r={};for(var k in o){if(k[0]==='_')continue;r[k]=s(o[k]);}return r;}return o;}fs.writeFileSync(p2,JSON.stringify(s(t),null,2));" "%SCRIPT_DIR%core\settings.template.json" "%CLAUDE_HOME%\settings.json" >nul 2>&1
     if %errorlevel% equ 0 (
-        echo   OK settings.json created with v4.3.1 hooks
+        echo   OK settings.json created with v4.4 hooks
     ) else (
         echo   ! Could not auto-create settings.json
         echo     Copy core\settings.template.json to %CLAUDE_HOME%\settings.json manually
@@ -196,9 +196,9 @@ echo   OK %cmd_count% commands installed
 echo.
 echo ============================================================
 if "%UPGRADING%"=="true" (
-    echo   Sinapsis v4.3.1 upgrade complete!
+    echo   Sinapsis v4.4 upgrade complete!
 ) else (
-    echo   Sinapsis v4.3.1 installed!
+    echo   Sinapsis v4.4 installed!
 )
 echo ============================================================
 echo.

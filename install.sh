@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-#  Sinapsis v4.3.1 — Installer for macOS / Linux
+#  Sinapsis v4.4 — Installer for macOS / Linux
 #  Skills on Demand for Claude Code
 #  https://github.com/Luispitik/sinapsis-3.2
 # ============================================================
@@ -28,7 +28,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo ""
 echo -e "${PURPLE}${BOLD}============================================================${NC}"
-echo -e "${PURPLE}${BOLD}  Sinapsis v4.3.0 — Skills on Demand for Claude Code${NC}"
+echo -e "${PURPLE}${BOLD}  Sinapsis v4.4 — Skills on Demand for Claude Code${NC}"
 echo -e "${PURPLE}${BOLD}  The system that learns and adapts to you${NC}"
 echo -e "${PURPLE}${BOLD}============================================================${NC}"
 echo ""
@@ -52,7 +52,7 @@ fi
 
 if ! command -v node &> /dev/null; then
     echo -e "${RED}  ERROR${NC} Node.js not found."
-    echo -e "${RED}         Sinapsis v4.2 hooks require Node.js.${NC}"
+    echo -e "${RED}         Sinapsis hooks require Node.js.${NC}"
     echo -e "${RED}         Install it: https://nodejs.org${NC}"
     exit 1
 else
@@ -150,7 +150,7 @@ else
     echo -e "${YELLOW}    Check core/CLAUDE.md.template for updates${NC}"
 fi
 
-# v4.3.1: restrictive permissions on data files (#5D)
+# Restrictive permissions on data files (#5D)
 chmod 600 "$SKILLS_DIR/_instincts-index.json" "$SKILLS_DIR/_passive-rules.json" "$SKILLS_DIR/_projects.json" "$SKILLS_DIR/_operator-state.json" 2>/dev/null || true
 
 echo -e "${GREEN}  OK${NC} Core config files installed"
@@ -199,7 +199,7 @@ function strip(obj) {
 }
 fs.writeFileSync(process.argv[2], JSON.stringify(strip(template), null, 2));
 ' "$SCRIPT_DIR/core/settings.template.json" "$SETTINGS_FILE"
-    echo -e "${GREEN}  OK${NC} settings.json created with v4.1 hooks"
+    echo -e "${GREEN}  OK${NC} settings.json created with v4.4 hooks"
 else
     echo -e "${YELLOW}  ! settings.json already exists${NC}"
     echo -e "${YELLOW}    Review core/settings.template.json and merge hooks manually${NC}"
@@ -238,9 +238,9 @@ echo -e "${GREEN}  OK${NC} $cmd_count commands installed"
 echo ""
 echo -e "${GREEN}${BOLD}============================================================${NC}"
 if $UPGRADING; then
-    echo -e "${GREEN}${BOLD}  Sinapsis v4.3.0 upgrade complete!${NC}"
+    echo -e "${GREEN}${BOLD}  Sinapsis v4.4 upgrade complete!${NC}"
 else
-    echo -e "${GREEN}${BOLD}  Sinapsis v4.3.0 installed!${NC}"
+    echo -e "${GREEN}${BOLD}  Sinapsis v4.4 installed!${NC}"
 fi
 echo -e "${GREEN}${BOLD}============================================================${NC}"
 echo ""

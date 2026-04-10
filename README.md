@@ -1,5 +1,9 @@
 # Sinapsis v4.4
 
+[![Version](https://img.shields.io/badge/version-4.4-blue.svg)](https://github.com/Luispitik/sinapsis-3.2/releases/tag/v4.4)
+[![Tests](https://img.shields.io/badge/tests-52%2B%20passing-green.svg)](tests/)
+[![License](https://img.shields.io/badge/license-Source%20Available-orange.svg)](LICENSE)
+
 ### The skill system for Claude Code that learns and adapts to you.
 
 > Stop explaining the same thing twice. Sinapsis remembers, learns, and gets better with every session.
