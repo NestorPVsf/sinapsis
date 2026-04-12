@@ -2,7 +2,7 @@
 # ============================================================
 #  Sinapsis v4.3 — Installer for macOS / Linux
 #  Skills on Demand for Claude Code
-#  https://github.com/Luispitik/sinapsis-3.2
+#  https://github.com/Luispitik/sinapsis
 # ============================================================
 
 set -e

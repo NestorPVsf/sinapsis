@@ -1,6 +1,6 @@
 # Sinapsis v4.3
 
-[![Version](https://img.shields.io/badge/version-4.3-blue.svg)](https://github.com/Luispitik/sinapsis-3.2/releases/tag/v4.3)
+[![Version](https://img.shields.io/badge/version-4.3-blue.svg)](https://github.com/Luispitik/sinapsis/releases/tag/v4.3)
 [![Tests](https://img.shields.io/badge/tests-52%2B%20passing-green.svg)](tests/)
 [![License](https://img.shields.io/badge/license-Source%20Available-orange.svg)](LICENSE)
 
@@ -102,16 +102,16 @@ See [CHANGELOG.md](CHANGELOG.md) for full details.
 
 **macOS / Linux:**
 ```bash
-git clone https://github.com/Luispitik/sinapsis-3.2.git
-cd sinapsis-3.2
+git clone https://github.com/Luispitik/sinapsis.git
+cd sinapsis
 chmod +x install.sh
 ./install.sh
 ```
 
 **Windows (Command Prompt):**
 ```cmd
-git clone https://github.com/Luispitik/sinapsis-3.2.git
-cd sinapsis-3.2
+git clone https://github.com/Luispitik/sinapsis.git
+cd sinapsis
 install.bat
 ```
 
@@ -130,7 +130,7 @@ If you already have v3.2 installed, the installer handles the upgrade automatica
 git -C sinapsis-3.2 pull origin main
 
 # Run the installer again — it detects the upgrade automatically
-cd sinapsis-3.2
+cd sinapsis
 ./install.sh        # macOS / Linux
 # install.bat       # Windows
 ```

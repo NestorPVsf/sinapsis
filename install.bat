@@ -5,7 +5,7 @@ setlocal enabledelayedexpansion
 :: ============================================================
 ::  Sinapsis v4.3 — Installer for Windows
 ::  Skills on Demand for Claude Code
-::  https://github.com/Luispitik/sinapsis-3.2
+::  https://github.com/Luispitik/sinapsis
 :: ============================================================
 
 set "CLAUDE_HOME=%USERPROFILE%\.claude"
