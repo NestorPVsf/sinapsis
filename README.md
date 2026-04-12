@@ -1,6 +1,6 @@
-# Sinapsis v4.4
+# Sinapsis v4.3
 
-[![Version](https://img.shields.io/badge/version-4.4-blue.svg)](https://github.com/Luispitik/sinapsis-3.2/releases/tag/v4.4)
+[![Version](https://img.shields.io/badge/version-4.3-blue.svg)](https://github.com/Luispitik/sinapsis-3.2/releases/tag/v4.3)
 [![Tests](https://img.shields.io/badge/tests-52%2B%20passing-green.svg)](tests/)
 [![License](https://img.shields.io/badge/license-Source%20Available-orange.svg)](LICENSE)
 
@@ -27,26 +27,13 @@ Think of it as going from a dumb terminal to an assistant that actually knows yo
 
 ---
 
-## What's New in v4.4 — GStack Integration
+## What's New in v4.3 — Dream Cycle + Confidence Decay
 
-v4.4 integrates concepts from [garrytan/gstack](https://github.com/garrytan/gstack) (23 YC engineering skills) into Sinapsis. Three new skills, session timeline infrastructure, and cross-project instinct search.
+### Confidence Decay
+Instincts that stop being useful fade automatically: confirmed (60d inactive) → draft, draft (90d) → archived. Permanent never decays.
 
-### 3 New Skills
-
-| Skill | What it does |
-|-------|-------------|
-| **`/review-army`** | 5 parallel specialist code review (security, Next.js, Supabase, performance, testing). Fix-First workflow: auto-fix mechanical issues, ASK on critical. PR Quality Score 0-10. |
-| **`/cso-audit`** | OWASP Top 10 + STRIDE + supply chain + LLM security audit. Daily mode (8/10 confidence gate, zero-noise) and comprehensive mode (2/10 gate, deep scan). |
-| **`/investigate-pro`** | 4-phase systematic debugging: investigate → analyze → hypothesize → implement. Iron Law: no fix without confirmed root cause. Scope freeze prevents scope creep. |
-
-### Infrastructure
-
-| Feature | Description |
-|---------|-------------|
-| **Confidence decay** | Instincts that stop being useful fade: confirmed (60d inactive) → draft, draft (90d) → archived. Permanent never decays. |
-| **Session timeline** | JSONL event log (`_session-timeline.jsonl`) tracks every skill invocation. Powers `/retro-semanal` and `/eod`. |
-| **Cross-project search** | `/instinct-status --cross-project "query"` searches instincts across all registered projects without promoting. |
-| **`/retro-semanal`** | Weekly retrospective: commits per project, skills used, instincts activated, health score trend. |
+### Cross-project Search
+`/instinct-status --cross-project "query"` searches instincts across all registered projects without promoting.
 
 ### Previous versions
 
@@ -317,10 +304,7 @@ See `core/settings.template.json` for the exact configuration.
 | `/projects` | List all known projects with stats |
 | `/eod` | Save work context for tomorrow's session |
 | `/dream` | Run dream cycle: index hygiene with 5-module analysis |
-| `/retro-semanal` | Weekly retrospective: commits, skills, instincts, health score |
-| `/review-army` | 5-specialist parallel code review with Fix-First |
-| `/cso-audit` | OWASP + STRIDE + supply chain + LLM security audit |
-| `/investigate-pro` | 4-phase systematic debugging with Iron Law |
+| `/dream` | Run dream cycle: index hygiene with 5-module analysis |
 
 ### Session Continuity (`/eod`)
 
@@ -353,17 +337,12 @@ Use `/eod --quick` for a fast auto-generated summary, or `/eod --yesterday` to r
     _instinct-activator.sh     <-- Hook: injects matched instincts
     _instincts-index.json      <-- Instinct registry
     _instinct-proposals.json   <-- Draft proposals from session-learner
-    _session-timeline.jsonl    <-- NEW v4.4: Skill usage event log
-    _timeline-log.sh           <-- NEW v4.4: Helper to append timeline events
     _project-context.sh        <-- Hook: injects project context (once/session)
     _session-learner.sh        <-- Stop hook: writes context + detects patterns
     _dream.sh                  <-- Dream cycle: 5-module index hygiene
     _operator-state.json       <-- Your identity + decisions (cross-project)
     _projects.json             <-- Project registry
-    review-army/               <-- NEW v4.4: 5-specialist code review
-    cso-audit/                 <-- NEW v4.4: OWASP+STRIDE security audit
-    investigate-pro/           <-- NEW v4.4: 4-phase systematic debugging
-  commands/                    <-- Slash commands (/evolve, /retro-semanal, etc.)
+  commands/                    <-- Slash commands (/evolve, /dream, etc.)
   homunculus/
     projects/{hash}/
       observations.jsonl       <-- Raw tool observations (local only)
@@ -428,7 +407,7 @@ Built by [Luis Salgado](https://salgadoia.com) — AI consultant, developer, and
 
 Powered by [Claude Code](https://claude.ai/code) by Anthropic.
 
-v4.4 skills (`/review-army`, `/cso-audit`, `/investigate-pro`), confidence decay, session timeline, and `/retro-semanal` inspired by [garrytan/gstack](https://github.com/garrytan/gstack) (MIT License, Copyright (c) 2026 Garry Tan). All implementations are original.
+Confidence decay inspired by [garrytan/gstack](https://github.com/garrytan/gstack) (MIT License, Copyright (c) 2026 Garry Tan).
 
 ---
 

@@ -3,7 +3,7 @@ chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
 
 :: ============================================================
-::  Sinapsis v4.4 — Installer for Windows
+::  Sinapsis v4.3 — Installer for Windows
 ::  Skills on Demand for Claude Code
 ::  https://github.com/Luispitik/sinapsis-3.2
 :: ============================================================
@@ -18,7 +18,7 @@ set "SCRIPT_DIR=%~dp0"
 
 echo.
 echo ============================================================
-echo   Sinapsis v4.4 -- Skills on Demand for Claude Code
+echo   Sinapsis v4.3 -- Skills on Demand for Claude Code
 echo   The system that learns and adapts to you
 echo ============================================================
 echo.
@@ -42,7 +42,7 @@ if %errorlevel% neq 0 (
 where node >nul 2>&1
 if %errorlevel% neq 0 (
     echo   ERROR: Node.js not found.
-    echo          Sinapsis v4.4 hooks require Node.js.
+    echo          Sinapsis v4.3 hooks require Node.js.
     echo          Install it: https://nodejs.org
     pause
     exit /b 1
@@ -196,9 +196,9 @@ echo   OK %cmd_count% commands installed
 echo.
 echo ============================================================
 if "%UPGRADING%"=="true" (
-    echo   Sinapsis v4.4 upgrade complete!
+    echo   Sinapsis v4.3 upgrade complete!
 ) else (
-    echo   Sinapsis v4.4 installed!
+    echo   Sinapsis v4.3 installed!
 )
 echo ============================================================
 echo.

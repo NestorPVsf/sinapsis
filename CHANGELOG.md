@@ -1,8 +1,24 @@
 # Changelog
 
-## v4.4 (2026-04-09)
+## v4.3.2 (2026-04-12)
 
-### Added — GStack Integration (garrytan/gstack)
+### Removed — GStack Separation (focus: autonomous learning only)
+- **`/review-army`**, **`/cso-audit`**, **`/investigate-pro`** skills moved out (engineering tools, not learning)
+- **`/retro-semanal`** command moved out (reporting, not learning)
+- **`_timeline-log.sh`** helper moved out (infrastructure for removed skills)
+- **`__pycache__/observe_v3.cpython-314.pyc`** removed from git tracking
+- All 5 components archived to `~/.claude/skills/_archived/sinapsis-gstack/` with recovery guide
+- Version badges and references cleaned back to v4.3
+
+### Kept from v4.4
+- **Confidence decay** in `_instinct-activator.sh` (learning hygiene — confirmed 60d→draft, draft 90d→archived)
+- **Cross-project search** in `/instinct-status --cross-project` (learning infrastructure)
+
+---
+
+## v4.4 (2026-04-09) — SUPERSEDED by v4.3.2
+
+### Added — GStack Integration (garrytan/gstack) — MOVED OUT
 - **Confidence decay** in `_instinct-activator.sh`: confirmed(60d inactive) -> draft, draft(90d inactive) -> archived. Permanent never decays. Credit: garrytan/gstack learnings confidence decay.
 - **`/review-army`** skill: 5 specialist parallel code review (security, nextjs, supabase, performance, testing). Fix-First workflow, quality scoring. Tested live on mission-control (8.5/10, 3 findings, 0 false positives).
 - **`/cso-audit`** skill: OWASP Top 10 + STRIDE + supply chain + LLM security audit. Daily mode (8/10 gate) and comprehensive mode (2/10 gate).

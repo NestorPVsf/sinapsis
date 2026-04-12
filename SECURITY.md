@@ -141,5 +141,5 @@ Full audit details in [CHANGELOG.md](CHANGELOG.md) under v4.3.1.
 1. **Keep Sinapsis updated** — run `git pull` and re-run the installer regularly
 2. **Review instinct proposals** before accepting — use `/analyze-session` to inspect what the learning engine proposes
 3. **Don't store secrets in project files** — Sinapsis scans for them, but prevention is better than detection
-4. **Run `/cso-audit`** periodically on your projects — it checks OWASP Top 10, STRIDE, and supply chain risks
+4. **Run periodic security audits** on your projects — check OWASP Top 10, STRIDE, and supply chain risks
 5. **Use `/dream`** to maintain index hygiene — removes duplicates, contradictions, and stale patterns

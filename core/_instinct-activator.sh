@@ -1,5 +1,5 @@
 #!/bin/bash
-# Instinct Activator - Sinapsis v4.4
+# Instinct Activator - Sinapsis v4.3
 # Reads tool data from stdin, matches against learned instincts, outputs systemMessage
 # v4.2: occurrence tracking + auto-promote draft→confirmed at 5+ matches
 # v4.2.1: occurrences tiebreaker in domain dedup + domain pre-filter by project stack
