@@ -47,12 +47,6 @@ Think of it as going from a dumb terminal to an assistant that actually knows yo
 ### Previous versions
 
 <details>
-<summary>v4.3.2 — GStack Separation</summary>
-
-Engineering tools (review-army, cso-audit, investigate-pro) moved to separate repo. Sinapsis refocused on autonomous learning only. 69 tests.
-</details>
-
-<details>
 <summary>v4.3 — Dream Cycle</summary>
 
 5-module index hygiene system inspired by Anthropic's AutoDream. Duplicate detection, contradiction detection, staleness scoring, trigger validation, health metrics. 40 new tests.
@@ -425,7 +419,7 @@ Built by [Luis Salgado](https://salgadoia.com) — AI consultant, developer, and
 
 Powered by [Claude Code](https://claude.ai/code) by Anthropic.
 
-v4.3.3 hardening inspired by [Fernando Montero / fs-cortex](https://github.com/fermonterom/fs-cortex) (Cortex v3.10 comparison analysis). Confidence decay inspired by [garrytan/gstack](https://github.com/garrytan/gstack) (MIT License). v4.3.1 audit by Fernando Montero (Fersora Solutions).
+v4.3.3 hardening inspired by [Fernando Montero / fs-cortex](https://github.com/fermonterom/fs-cortex) (Cortex v3.10 comparison analysis). Confidence decay inspired by [garrytan/gstack](https://github.com/garrytan/gstack) (MIT License). v4.3.1 security audit by Fernando Montero (Fersora Solutions).
 
 ---
 
