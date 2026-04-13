@@ -19,6 +19,11 @@
 - `_session-learner.sh`: 3 → 5 pattern detectors (+ repetitions + agent patterns)
 - `install.sh`: legacy cleanup step added
 
+### Portability & Cleanup
+- **`/backup [path]`** command: export full Sinapsis state to a portable folder for sync or migration between machines. Exports instincts, rules, operator state, commands, settings, CLAUDE.md + manifest.
+- **`/restore [path]`** command: import Sinapsis state from a backup folder with intelligent merge (by ID, keeps local occurrence data, asks before overwriting machine-specific files).
+- **`/cleanup`** command: clean homunculus directory — removes v1 legacy files (config.json, identity.json, instincts/, evolved/, exports/, root observations), orphan projects (30+ days inactive), and old archives (60+ days).
+
 ### Tests
 - 14 new TDD tests (`tests/test-v433-hardening.sh`)
 
