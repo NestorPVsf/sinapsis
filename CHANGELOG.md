@@ -1,5 +1,23 @@
 # Changelog
 
+## v4.3.3 (2026-04-13)
+
+### Added — Hardening from Cortex Comparison (credit: Fernando Montero / fs-cortex v3.10)
+- **`/downvote`** command: demote or archive instincts that give bad advice. Closes the feedback loop.
+- **3 extra scrubbing patterns** in `observe_v3.py`: Stripe (`sk_live/sk_test`), Slack (`xoxb/xoxp`), SendGrid (`SG.*`). Now 8 patterns total (was 5).
+- **Path traversal protection** in `_instinct-activator.sh`: blocks inject content containing `../`, `~/`, `/etc/`, `/proc/`.
+- **Token budget cap** (`TOKEN_BUDGET=1500`): limits total chars injected per tool use. Prevents instinct loops.
+- **Multi-session auto-promote**: drafts now require 5+ occurrences AND 3+ distinct sessions to promote. Tracks `sessions_seen[]` per instinct. (Was: 5+ occurrences in any number of sessions.)
+
+### Changed
+- `observe_v3.py`: 5 → 8 scrubbing patterns
+- `_instinct-activator.sh`: path traversal check, budget cap, multi-session tracking
+
+### Tests
+- 14 new TDD tests (`tests/test-v433-hardening.sh`)
+
+---
+
 ## v4.3.2 (2026-04-12)
 
 ### Removed — GStack Separation (focus: autonomous learning only)

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Instinct Activator - Sinapsis v4.3
+# Instinct Activator - Sinapsis v4.3.3
 # Reads tool data from stdin, matches against learned instincts, outputs systemMessage
 # v4.2: occurrence tracking + auto-promote draft→confirmed at 5+ matches
 # v4.2.1: occurrences tiebreaker in domain dedup + domain pre-filter by project stack
@@ -141,19 +141,31 @@ process.stdin.on("end", () => {
   // v4.3.1: sanitize inject content (#5F — prompt injection prevention)
   const INJECT_MAX_LEN = 500;
   const INJECT_BLOCKED = /ignore\s+(previous|above|all)\s+instructions|system:\s*you\s+are|<\/?system>|<\/?prompt>/i;
+  // v4.3.3: path traversal protection (inspired by Cortex v3.10)
+  const PATH_TRAVERSAL = /\.\.[\/\\]|~\/|\/etc\/|\/proc\/|%2e%2e/i;
+  // v4.3.3: token budget cap — max chars injected per tool use (inspired by Cortex 8000/session)
+  const TOKEN_BUDGET = 1500;
 
   // Only output systemMessage if there are injectable matches
   if (top.length > 0) {
-    const msgs = top
-      .filter(m => !INJECT_BLOCKED.test(m.inject || ""))
-      .map(m => "[instinct] " + (m.inject || "").slice(0, INJECT_MAX_LEN));
+    let totalLen = 0;
+    const msgs = [];
+    for (const m of top) {
+      const inj = (m.inject || "").slice(0, INJECT_MAX_LEN);
+      if (INJECT_BLOCKED.test(inj)) continue;
+      if (PATH_TRAVERSAL.test(inj)) continue; // v4.3.3: block path_blocked traversal
+      if (totalLen + inj.length > TOKEN_BUDGET) break; // v4.3.3: budget cap
+      totalLen += inj.length;
+      msgs.push("[instinct] " + inj);
+    }
     if (msgs.length > 0) {
       console.log(JSON.stringify({ systemMessage: msgs.join("\n\n") }));
     }
   }
 
-  // v4.3.1: Occurrence tracking for ALL matches (including drafts) + auto-promote
+  // v4.3.3: Occurrence tracking + multi-session auto-promote (inspired by Cortex 5+acts,3+sessions)
   const now = new Date().toISOString();
+  const sessionId = data.session_id || ("s-" + Date.now());
   let promoted = [];
   try {
     const allMatchedIds = new Set([...top.map(m => m.id), ...draftMatches.map(m => m.id)]);
@@ -163,9 +175,16 @@ process.stdin.on("end", () => {
       inst.occurrences = (inst.occurrences || 0) + 1;
       inst.last_triggered = now;
       if (!inst.first_triggered) inst.first_triggered = now;
+      // v4.3.3: track distinct sessions for multi-session promote
+      if (!inst.sessions_seen) inst.sessions_seen = [];
+      if (!inst.sessions_seen.includes(sessionId)) {
+        inst.sessions_seen.push(sessionId);
+        // Cap at 20 to prevent unbounded growth
+        if (inst.sessions_seen.length > 20) inst.sessions_seen = inst.sessions_seen.slice(-20);
+      }
       dirty = true;
-      // Auto-promote: draft with 5+ occurrences → confirmed
-      if (inst.level === "draft" && inst.occurrences >= 5) {
+      // v4.3.3: Auto-promote: draft with 5+ occurrences AND 3+ distinct sessions → confirmed
+      if (inst.level === "draft" && inst.occurrences >= 5 && (inst.sessions_seen || []).length >= 3) {
         inst.level = "confirmed";
         promoted.push(inst.id);
       }

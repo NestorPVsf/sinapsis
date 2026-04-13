@@ -84,7 +84,7 @@ def main():
     input_str = json.dumps(tool_input)[:5000] if isinstance(tool_input, dict) else str(tool_input)[:5000]
     output_str = json.dumps(tool_output)[:10000] if isinstance(tool_output, dict) else str(tool_output)[:10000]
 
-    # Scrub secrets — 5 patterns (v4.3.1: added JWT, GitHub, AWS, PEM)
+    # Scrub secrets — 8 patterns (v4.3.3: added Stripe, Slack, SendGrid)
     SECRET_RE = re.compile(
         r"(?i)(api[_-]?key|token|secret|password|authorization|credentials?|auth)"
         r"([\"'\s:=]+)"
@@ -95,6 +95,10 @@ def main():
     GITHUB_RE = re.compile(r"gh[ps]_[A-Za-z0-9]{36,}")
     AWS_RE = re.compile(r"AKIA[A-Z0-9]{16}")
     PEM_RE = re.compile(r"-----BEGIN [A-Z ]+-----[\s\S]*?-----END [A-Z ]+-----")
+    # v4.3.3: 3 extra patterns (inspired by Cortex v3.10 — 12 patterns)
+    STRIPE_RE = re.compile(r"(?:sk_live|sk_test|rk_live|rk_test)_[A-Za-z0-9]{20,}")
+    SLACK_RE = re.compile(r"xox[bpras]-[A-Za-z0-9\-]{10,}")
+    SENDGRID_RE = re.compile(r"SG\.[A-Za-z0-9_\-]{20,}\.[A-Za-z0-9_\-]{20,}")
 
     def scrub(val):
         if val is None:
@@ -108,6 +112,9 @@ def main():
         s = GITHUB_RE.sub("[GITHUB_TOKEN_REDACTED]", s)
         s = AWS_RE.sub("[AWS_KEY_REDACTED]", s)
         s = PEM_RE.sub("[PEM_REDACTED]", s)
+        s = STRIPE_RE.sub("[STRIPE_KEY_REDACTED]", s)
+        s = SLACK_RE.sub("[SLACK_TOKEN_REDACTED]", s)
+        s = SENDGRID_RE.sub("[SENDGRID_KEY_REDACTED]", s)
         return s
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
