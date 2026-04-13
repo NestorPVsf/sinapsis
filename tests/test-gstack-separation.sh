@@ -83,12 +83,12 @@ else
   fail "README.md still references gstack skills ($GSTACK_README occurrences)"
 fi
 
-# Check that __pycache__ is not tracked
-PYC_FILES=$(find "$SCRIPT_DIR" -name "*.pyc" -not -path "*/.git/*" 2>/dev/null | wc -l)
-if [ "$PYC_FILES" -eq 0 ]; then
-  pass ".pyc files removed from repo"
+# Check that __pycache__/.pyc is not tracked by git (runtime-generated .pyc is OK)
+PYC_TRACKED=$(git -C "$SCRIPT_DIR" ls-files "*.pyc" "__pycache__" 2>/dev/null | wc -l | xargs)
+if [ "${PYC_TRACKED:-0}" -eq 0 ]; then
+  pass ".pyc files not tracked by git"
 else
-  fail "Found $PYC_FILES .pyc files still in repo"
+  fail "Found $PYC_TRACKED .pyc files tracked by git"
 fi
 
 # ── Summary ──
